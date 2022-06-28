@@ -1,0 +1,5 @@
+splunk.logging.url=http://localhost:5555/rest/wx.splunk.ws
+# The token should be linked to an index in Splunk:
+splunk.logging.token=Splunk XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
+# Use that key to enable or disable the logging directly during runtime:
+splunk.logging.enabled=true
