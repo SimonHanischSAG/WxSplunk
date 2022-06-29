@@ -29,7 +29,8 @@ Reload WxSplunk
 
 <h3>Configure Environment</h3>
 
-You have to configure WxSplunk in ../../../config/packages/WxSplunk/wxconfig-<environment>.cnf (example when you are using the simulation in WxSplunk_Test):
+You have to configure WxSplunk in ../../../config/packages/WxSplunk/wxconfig-<environment>.cnf (example when you are using the simulation in WxSplunk_Test. 
+In that case you have to adjust the permissions of wx.splunk.ws:_post e.g. to Anonymous):
 
 splunk.logging.url=http://localhost:5555/rest/wx.splunk.ws
 splunk.logging.token=Splunk XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
@@ -39,6 +40,11 @@ Reload WxSplunk. The startup will start the "continuousSplunkLoggerThread" with 
 
 CONSIDER THAT ALL CONFIG VALUES ARE CACHED except splunk.logging.enabled which is checked for each log statement.
 
+<h3>Test Configuration</h3>
+
+You can invoke wx.splunk.test:sendEventDirectlyToSplunk in order to test your configuration directly. 
+  
+Furthermore you can invoke wx.splunk.test:testContinuousSplunkLogger in order to test the continuousSplunkLogger
 <h3>Advanced</h3>
 
 Check WxSplunk_Test/wx.splunk.pub:test_log_with_more_fields and see how you can improve your logging. Consider that outside from event and fields you should not add 
