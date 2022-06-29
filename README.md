@@ -36,7 +36,11 @@ splunk.logging.url=http://localhost:5555/rest/wx.splunk.ws
 splunk.logging.token=Splunk XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
 splunk.logging.enabled=true
 
-Reload WxSplunk. The startup will start the "continuousSplunkLoggerThread" with that configuration. Check the server.log for more information.
+Reload WxSplunk. The startup will start the "continuousSplunkLoggerThread" with that configuration. Check the server.log for:
+  
+2022-06-29 09:38:00 CEST [ISS.0028.0012I] (tid=86) WxSplunk: Startup service (wx.splunk.admin:startUp) 
+2022-06-29 09:38:01 CEST [ISP.0090.0004I] (tid=86) WxSplunk -- startSplunkLoggerThread: Started 
+2022-06-29 09:38:01 CEST [ISP.0090.0004I] (tid=86) WxSplunk -- continuousSplunkLoggerThread: Thread started 
 
 CONSIDER THAT ALL CONFIG VALUES ARE CACHED except splunk.logging.enabled which is checked for each log statement.
 
