@@ -61,7 +61,7 @@ public final class impl
 		if (token == null || token.equals("")){
 			throw new ServiceException("token is null");
 		}
-		int batchSize = 0;
+		int batchSize = 500;
 		if (batchSizeString != null && !batchSizeString.equals("")) {
 			batchSize = Integer.valueOf(batchSizeString);
 		}
@@ -148,6 +148,7 @@ public final class impl
 			}
 		}
 		debugLogInfo("continuousSplunkLoggerThread: Thread stopped now");
+			
 			
 			
 			
@@ -398,6 +399,7 @@ public final class impl
 			}
 		}
 	}
+		
 		
 		
 		

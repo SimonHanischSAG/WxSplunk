@@ -38,7 +38,7 @@ YXJ0ZWQpIHsKCQkJZGVidWdMb2dFcnJvcigiY29udGludW91c1NwbHVua0xvZ2dlclRocmVhZFN0
 YXJ0ZWQ6IENvdWxkIG5vdCBzdG9wIik7CgkJCXN5bmNocm9uaXplZChxdWV1ZUxvY2spIHsKCQkJ
 CS8vIHJlLWluaXQgZm9yIHJlc3RhcnRpbmcgdGhyZWFkOgoJCQkJc3RvcENvbnRpbnVvdXNTcGx1
 bmtMb2dnZXJUaHJlYWQgPSBmYWxzZTsKCQkJCWNvbnRpbnVvdXNTcGx1bmtMb2dnZXJUaHJlYWRT
-dGFydGVkID0gZmFsc2U7CgkJCX0KCQl9Cgl9Cn0KCQoJCgkKCQoJCgkKCQ==</value>
+dGFydGVkID0gZmFsc2U7CgkJCX0KCQl9Cgl9Cn0KCQoJCgkKCQoJCgkKCQoJ</value>
   <value name="encodeutf8">true</value>
   <array name="imports" type="value" depth="1">
     <value>com.wm.util.JournalLogger</value>
