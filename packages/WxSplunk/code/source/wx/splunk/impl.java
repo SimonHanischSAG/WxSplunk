@@ -13,6 +13,7 @@ import com.wm.app.b2b.server.Session;
 import com.wm.lang.ns.NSName;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.atomic.AtomicLong;
 import com.softwareag.util.IDataMap;
@@ -87,6 +88,7 @@ public final class impl
 			NSName ns = NSName.create(SERVICE_SEND_EVENT);
 			
 			while (stopContinuousSplunkLoggerThread == false) {
+				long startBatch = System.nanoTime();
 				Collection<? super String> c = new ArrayList<String>(batchSize);
 				int elements = eventQueue.drainTo(c, batchSize);
 				if (elements > 0) {
@@ -108,15 +110,20 @@ public final class impl
 					do {
 						deliveryCounter++;
 						try {
+							long start = System.nanoTime();
 							Service.doInvoke(ns, httpInput);
+							lastDurationOfSendEventViaHttp = System.nanoTime() - start;
 							success = true;
 						} catch (Exception e) {
 							debugLogTrace("Error during sending to Splunk: " + e.getMessage());
 						}
 					} while (!success && deliveryCounter < maxDeliveryAttempts);
 					if (!success) {
-						dropEvent();
-						debugLogTrace("Dropped message");
+						dropEvent(elements);
+						debugLogTrace("Dropped messages");
+					} else {
+						sentEvents.addAndGet(elements);
+						lastBatchSize = elements;
 					}
 					if (elements > 10 && currentSleepingTime > minSleepingTimeAfterBatchInMilliseconds) {
 						currentSleepingTime -= 100;
@@ -129,6 +136,7 @@ public final class impl
 				if (iteration % 1 == 0) {
 					debugLogTrace("Iteration: " + iteration);
 				}
+				lastDurationOfBatchRun = System.nanoTime() - startBatch;
 				try {
 					Thread.sleep(currentSleepingTime);
 				} catch (Exception e) {
@@ -181,11 +189,17 @@ public final class impl
 			pipeMap.put("queueSize", "Not initialized");
 		}
 		pipeMap.put("stopContinuousSplunkLoggerThread", String.valueOf(stopContinuousSplunkLoggerThread));
+		pipeMap.put("sentEvents", String.valueOf(sentEvents.get()));
 		pipeMap.put("droppedEvents", String.valueOf(droppedEvents.get()));
 		pipeMap.put("currentSleepingTime", String.valueOf(currentSleepingTime));
 		pipeMap.put("minSleepingTimeAfterBatchInMilliseconds", String.valueOf(minSleepingTimeAfterBatchInMilliseconds));
 		pipeMap.put("maxSleepingTimeAfterBatchInMilliseconds", String.valueOf(maxSleepingTimeAfterBatchInMilliseconds));
 		pipeMap.put("tracingEnabled", String.valueOf(tracingEnabled));
+		pipeMap.put("lastDurationOfSendEventToQueueInNanoseconds", String.valueOf(lastDurationOfSendEventToQueue));
+		pipeMap.put("lastDurationOfSendEventViaHttpInMilliseconds", String.valueOf(lastDurationOfSendEventViaHttp/1000000));
+		pipeMap.put("lastDurationOfBatchRunInMilliseconds", String.valueOf(lastDurationOfBatchRun/1000000));
+		pipeMap.put("lastBatchSize", String.valueOf(lastBatchSize));
+		
 			
 			
 			
@@ -203,6 +217,7 @@ public final class impl
 		// --- <<IS-START(sendEventToQueue)>> ---
 		// @sigtype java 3.5
 		// [i] field:0:required messageAsJsonString
+		long start = System.nanoTime();
 		debugLogTrace("sendEventToQueue invoked");
 		IDataMap pipeMap = new IDataMap(pipeline);
 		String messageAsJsonString = pipeMap.getAsString("messageAsJsonString");
@@ -210,14 +225,16 @@ public final class impl
 			
 			boolean inserted = eventQueue.offer(messageAsJsonString);
 			if (!inserted) {
-				dropEvent();
+				dropEvent(1);
 				debugLogTrace("sendEventToQueue: Message dropped as queue is full");
 			}
 		} else {
-			dropEvent();
+			dropEvent(1);
 			debugLogTrace("sendEventToQueue: not initialized. Message: " + messageAsJsonString);
 		}
 			
+		lastDurationOfSendEventToQueue = System.nanoTime() - start;
+		
 			
 		// --- <<IS-END>> ---
 
@@ -282,12 +299,15 @@ public final class impl
 					debugLogError("startLoggerThread: Drop old eventQueue");
 				}
 				String maxMessagesInQueueString = pipeMap.getAsString("maxMessagesInQueue");
-				int maxMessagesInQueue = 10000;
+				int maxMessagesInQueue = 100000;
 				if (maxMessagesInQueueString != null && !maxMessagesInQueueString.equals("")) {
 					maxMessagesInQueue = Integer.valueOf(maxMessagesInQueueString);
 				}
 			
 				eventQueue = new ArrayBlockingQueue<String>(maxMessagesInQueue, true);
+				
+				droppedEvents = new AtomicLong();
+				sentEvents = new AtomicLong();
 				
 				//IData input = IDataFactory.create();
 				NSName ns = NSName.create(SERVICE_LOGGER_THREAD);
@@ -299,6 +319,7 @@ public final class impl
 		} catch (Exception e) {
 			throw new ServiceException(e);
 		}
+			
 			
 			
 			
@@ -348,14 +369,19 @@ public final class impl
 	private static long minSleepingTimeAfterBatchInMilliseconds = 100;
 	private static long maxSleepingTimeAfterBatchInMilliseconds = 1000;
 	private static AtomicLong droppedEvents = new AtomicLong();
+	private static AtomicLong sentEvents = new AtomicLong();
 	private static boolean tracingEnabled = false;
 	private static long currentSleepingTime = maxSleepingTimeAfterBatchInMilliseconds;
 	private static String SERVICE_SEND_EVENT = "wx.splunk.impl:sendJsonStringToSplunk";
 	private static String SERVICE_LOGGER_THREAD = "wx.splunk.impl:continuousSplunkLoggerThread";
 	private static String LOG_FUNCTION = "WxSplunk";
+	private static long lastDurationOfSendEventToQueue = -1;
+	private static long lastDurationOfSendEventViaHttp = -1;
+	private static long lastDurationOfBatchRun = -1;
+	private static int lastBatchSize = -1;
 	
-	private static void dropEvent() {
-		droppedEvents.incrementAndGet();
+	private static void dropEvent(long count) {
+		droppedEvents.addAndGet(count);
 	}
 	
 	private static void debugLogTrace(String message) {

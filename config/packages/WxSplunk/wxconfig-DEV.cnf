@@ -3,3 +3,14 @@ splunk.logging.url=http://localhost:5555/rest/wx.splunk.ws
 splunk.logging.token=Splunk XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
 # Use that key to enable or disable the logging directly during runtime:
 splunk.logging.enabled=true
+
+# Count of retries for sending messages to Splunk
+splunk.logging.maxDeliveryAttempts=10
+# Count of messages which can be stored in the internal queue and waiting for sending
+splunk.logging.maxMessagesInQueue=10000
+
+# How many events shall be written to Splunk in one call
+splunk.logging.batchSize=500
+# How often should wx.splunk.impl:continuousSplunkLoggerThread become active:
+splunk.logging.minSleepingTimeAfterBatchInMilliseconds=500
+splunk.logging.maxSleepingTimeAfterBatchInMilliseconds=2000
