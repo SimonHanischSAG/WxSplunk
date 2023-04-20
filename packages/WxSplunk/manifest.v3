@@ -11,7 +11,10 @@
     <null name="wx.splunk.admin:shutdown"/>
   </record>
   <null name="replication_services"/>
-  <null name="requires"/>
+  <record name="requires" javaclass="com.wm.util.Values">
+    <value name="WxConfig">*.*</value>
+  </record>
   <value name="listACL">Default</value>
   <value name="webappLoad">yes</value>
+  <value name="reloadWithDependentPackage">yes</value>
 </Values>
