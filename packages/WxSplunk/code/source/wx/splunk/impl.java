@@ -86,6 +86,7 @@ public final class impl
 			httpInputMap.put("url", url);
 			httpInputMap.put("token", token);
 			NSName ns = NSName.create(SERVICE_SEND_EVENT);
+			NSName nsBuffer = NSName.create(SERVICE_SEND_EVENT_TO_BUFFER);
 			
 			while (stopContinuousSplunkLoggerThread == false) {
 				long startBatch = System.nanoTime();
@@ -119,8 +120,14 @@ public final class impl
 						}
 					} while (!success && deliveryCounter < maxDeliveryAttempts);
 					if (!success) {
-						dropEvent(elements);
-						debugLogTrace("Dropped messages");
+						try {
+							Service.doInvoke(nsBuffer, httpInput);
+							sentEventsToBuffer.addAndGet(elements);
+							debugLogTrace("Sent message to Buffer");
+						} catch (Exception e) {
+							dropEvent(elements);
+							debugLogTrace("Dropped message after tried to send to Buffer because of error: " + e.getMessage());
+						}
 					} else {
 						sentEvents.addAndGet(elements);
 						lastBatchSize = elements;
@@ -161,6 +168,7 @@ public final class impl
 			
 			
 			
+			
 		// --- <<IS-END>> ---
 
                 
@@ -177,6 +185,8 @@ public final class impl
 		// [o] field:0:required queueSize
 		// [o] field:0:required stopContinuousSplunkLoggerThread
 		// [o] field:0:required droppedEvents
+		// [o] field:0:required sentEvents
+		// [o] field:0:required sentEventsToBuffer
 		// [o] field:0:required currentSleepingTime
 		// [o] field:0:required minSleepingTimeAfterBatchInMilliseconds
 		// [o] field:0:required maxSleepingTimeAfterBatchInMilliseconds
@@ -190,6 +200,7 @@ public final class impl
 		}
 		pipeMap.put("stopContinuousSplunkLoggerThread", String.valueOf(stopContinuousSplunkLoggerThread));
 		pipeMap.put("sentEvents", String.valueOf(sentEvents.get()));
+		pipeMap.put("sentEventsToBuffer", String.valueOf(sentEventsToBuffer.get()));
 		pipeMap.put("droppedEvents", String.valueOf(droppedEvents.get()));
 		pipeMap.put("currentSleepingTime", String.valueOf(currentSleepingTime));
 		pipeMap.put("minSleepingTimeAfterBatchInMilliseconds", String.valueOf(minSleepingTimeAfterBatchInMilliseconds));
@@ -200,6 +211,7 @@ public final class impl
 		pipeMap.put("lastDurationOfBatchRunInMilliseconds", String.valueOf(lastDurationOfBatchRun/1000000));
 		pipeMap.put("lastBatchSize", String.valueOf(lastBatchSize));
 		
+			
 			
 			
 			
@@ -370,9 +382,11 @@ public final class impl
 	private static long maxSleepingTimeAfterBatchInMilliseconds = 1000;
 	private static AtomicLong droppedEvents = new AtomicLong();
 	private static AtomicLong sentEvents = new AtomicLong();
+	private static AtomicLong sentEventsToBuffer = new AtomicLong();
 	private static boolean tracingEnabled = false;
 	private static long currentSleepingTime = maxSleepingTimeAfterBatchInMilliseconds;
 	private static String SERVICE_SEND_EVENT = "wx.splunk.impl:sendJsonStringToSplunk";
+	private static String SERVICE_SEND_EVENT_TO_BUFFER = "wx.splunk.impl:sendJsonStringToBuffer";
 	private static String SERVICE_LOGGER_THREAD = "wx.splunk.impl:continuousSplunkLoggerThread";
 	private static String LOG_FUNCTION = "WxSplunk";
 	private static long lastDurationOfSendEventToQueue = -1;
@@ -425,6 +439,7 @@ public final class impl
 			}
 		}
 	}
+		
 		
 		
 		

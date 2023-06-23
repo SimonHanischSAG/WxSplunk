@@ -5,12 +5,23 @@ splunk.logging.token=Splunk XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
 splunk.logging.enabled=true
 
 # Count of retries for sending messages to Splunk
-splunk.logging.maxDeliveryAttempts=100
+splunk.logging.maxDeliveryAttempts=1
 # Count of messages which can be stored in the internal queue and waiting for sending
-splunk.logging.maxMessagesInQueue=100000
+splunk.logging.maxMessagesInQueue=50000
 
 # How many events shall be written to Splunk in one call
 splunk.logging.batchSize=2000
 # How often should wx.splunk.impl:continuousSplunkLoggerThread become active:
-splunk.logging.minSleepingTimeAfterBatchInMilliseconds=100
-splunk.logging.maxSleepingTimeAfterBatchInMilliseconds=500
+splunk.logging.minSleepingTimeAfterBatchInMilliseconds=300
+splunk.logging.maxSleepingTimeAfterBatchInMilliseconds=1000
+
+# Buffer log messasges
+splunk.buffer.connectionAliasName=DEFAULT_IS_JMS_CONNECTION
+splunk.buffer.destinationName=internal/WxSplunkBufferQueue
+
+# Access to UM
+um.admin.hosts=nsp://localhost:9000
+um.admin.username=
+um.admin.password=
+um.connectionURL=nsp://localhost:9000
+

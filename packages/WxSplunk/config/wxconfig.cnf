@@ -1,7 +1,9 @@
+wx.config.autoSetup.execute=true
+wx.config.incl=auto-setup.xml
 wx.config.env.LOCAL-DEV=../../../config/packages/WxSplunk/wxconfig-LOCAL-DEV.cnf
 wx.config.env.DEV=../../../config/packages/WxSplunk/wxconfig-DEV.cnf
 wx.config.env.TEST=../../../config/packages/WxSplunk/wxconfig-TEST.cnf
-wx.config.env.QS=../../../config/packages/WxSplunk/wxconfig-QS.cnf
+wx.config.env.QA=../../../config/packages/WxSplunk/wxconfig-QA.cnf
 wx.config.env.PROD=../../../config/packages/WxSplunk/wxconfig-PROD.cnf
 
 
