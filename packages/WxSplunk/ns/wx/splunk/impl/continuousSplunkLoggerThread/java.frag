@@ -2,6 +2,15 @@
 
 <Values version="2.0">
   <value name="name">continuousSplunkLoggerThread</value>
+  <array name="sig" type="value" depth="1">
+    <value>[i] field:0:required url</value>
+    <value>[i] field:0:required token</value>
+    <value>[i] field:0:optional batchSize</value>
+    <value>[i] field:0:optional maxDeliveryAttempts</value>
+    <value>[i] field:0:optional minSleepingTimeAfterBatchInMilliseconds</value>
+    <value>[i] field:0:optional maxSleepingTimeAfterBatchInMilliseconds</value>
+  </array>
+  <value name="sigtype">java 3.5</value>
   <value name="encodeutf8">true</value>
   <value name="body">ZGVidWdMb2dJbmZvKCJjb250aW51b3VzU3BsdW5rTG9nZ2VyVGhyZWFkOiBUaHJlYWQgc3RhcnRl
 ZCIpOw0KSURhdGFNYXAgcGlwZU1hcCA9IG5ldyBJRGF0YU1hcChwaXBlbGluZSk7DQoNClN0cmlu
@@ -79,5 +88,5 @@ DQoJZGVidWdMb2dFcnJvcigiY29udGludW91c1NwbHVua0xvZ2dlclRocmVhZDogZXZlbnRRdWV1
 ZSBub3QgaW5pdGlhbGl6ZWQiKTsNCglzeW5jaHJvbml6ZWQocXVldWVMb2NrKSB7DQoJCWNvbnRp
 bnVvdXNTcGx1bmtMb2dnZXJUaHJlYWRTdGFydGVkID0gZmFsc2U7DQoJfQ0KfQ0KZGVidWdMb2dJ
 bmZvKCJjb250aW51b3VzU3BsdW5rTG9nZ2VyVGhyZWFkOiBUaHJlYWQgc3RvcHBlZCBub3ciKTsN
-CgkNCgkNCgkNCgkNCgkNCgk=</value>
+CgkNCgkNCgkNCgkNCgkNCgkNCg==</value>
 </Values>
