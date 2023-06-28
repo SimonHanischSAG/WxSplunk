@@ -4,6 +4,10 @@ This package encapsulate the process of sending your log messages as events to S
 For better performance it buffers the log messages in a queue in memory. A thread in background works through the queue and sending the events in batches to Splunk (DO NOT KILL THIS THREAD!).
 Between the batches this "continuousSplunkLoggerThread" will sleep a period of time. This time is depending on the load and the min and max which is configurable.
 
+If the http call for pushing the log messages in failing the messages are sent to a queue for later processing. Therefore message lost is very unlikely. 
+
+The direct invocation from Flow allows you to attach your **own labels** which can be used for building queries and dashboards. The alternative to this technique and package is to use the forworder from Splunk which will try to process the logfiles from filesystem also via HTTP.
+
 It is designed for usage together with the official packages WxConfig (or the free alternative https://github.com/SimonHanischSAG/WxConfigLight) and optionally together with the official packages WxLog or WxLog2.
 
 MANY THANKS TO LIDL AND SCHWARZ IT, who kindly allowed to provide the template for this package and make it public.
